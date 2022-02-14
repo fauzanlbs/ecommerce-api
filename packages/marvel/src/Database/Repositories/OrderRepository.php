@@ -104,6 +104,9 @@ class OrderRepository extends BaseRepository
                 // For default gateway no need to set gateway
                 Omnipay::setGateway('paypal');
                 break;
+            default:
+                return $this->createOrder($request);
+                break;
         }
 
         $response = $this->capturePayment($request);

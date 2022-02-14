@@ -21,6 +21,10 @@ use Marvel\Http\Controllers\ShopController;
 use Marvel\Http\Controllers\TagController;
 use Marvel\Http\Controllers\WithdrawController;
 
+Route::get('/hello', function () {
+    return 'Hello World';
+});
+
 Route::post('/register', 'Marvel\Http\Controllers\UserController@register');
 Route::post('/va', 'Marvel\Http\Controllers\UserController@getVa');
 Route::post('/ongkir', 'Marvel\Http\Controllers\UserController@getCost');
