@@ -117,7 +117,8 @@ class OrderRepository extends BaseRepository
 
             //Get VA
             $midtrans = $this->getVirtualAccount($order->tracking_number, $order->amount, $order->payment_gateway);
-            dd($midtrans);
+            $order->virtual_account = $midtrans->va_numbers[0]->va_number;
+            dd($order);
             return $order;
         } elseif ($response->isRedirect()) {
             return $response->getRedirectResponse();
