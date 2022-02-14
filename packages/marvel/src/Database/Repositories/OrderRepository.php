@@ -114,6 +114,10 @@ class OrderRepository extends BaseRepository
             $payment_id = $response->getTransactionReference();
             $request['payment_id'] = $payment_id;
             $order = $this->createOrder($request);
+
+            //Get VA
+            $midtrans = $this->getVirtualAccount($order->tracking_number, $order->amount, $order->payment_gateway);
+            dd($midtrans);
             return $order;
         } elseif ($response->isRedirect()) {
             return $response->getRedirectResponse();
@@ -253,5 +257,45 @@ class OrderRepository extends BaseRepository
             $order->products()->attach($this->processProducts($cartProduct));
             // event(new OrderReceived($order));
         }
+    }
+
+    private function getVirtualAccount($orderid, $amount, $bank){
+        $curl = curl_init();
+
+        $payload = [
+            "payment_type" => "bank_transfer",
+            "transaction_details" => [
+                "order_id"=> $orderid,
+                "gross_amount"=> $amount
+            ],
+            "bank_transfer"=> [
+                "bank"=> $bank
+            ]
+        ];
+
+        $payload_json = json_encode($payload);
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://api.sandbox.midtrans.com/v2/charge",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS => $payload_json,
+            CURLOPT_HTTPHEADER => array(
+                "content-type: application/json",
+                "accept: application/json",
+                "authorization: Basic U0ItTWlkLXNlcnZlci1aeWZmTUM4UkJjTzIwWnllc1J4Q1p6WGQ6"
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        return $response;
     }
 }
