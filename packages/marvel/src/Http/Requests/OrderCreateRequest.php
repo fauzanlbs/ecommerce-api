@@ -37,7 +37,7 @@ class OrderCreateRequest extends FormRequest
             'total'            => 'required|numeric',
             'delivery_time'    => 'nullable|string',
             'customer_contact' => 'string|required',
-            'payment_gateway'  => ['required', Rule::in([PaymentGatewayType::STRIPE, PaymentGatewayType::CASH_ON_DELIVERY])],
+            'payment_gateway'  => ['required', Rule::in([PaymentGatewayType::STRIPE, PaymentGatewayType::CASH_ON_DELIVERY, PaymentGatewayType::BCA, PaymentGatewayType::BNI, PaymentGatewayType::BRI])],
             'products'         => 'required|array',
             'card'             => 'array',
             'token'             => 'nullable|string',
