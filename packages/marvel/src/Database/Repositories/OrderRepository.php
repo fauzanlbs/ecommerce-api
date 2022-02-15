@@ -105,7 +105,11 @@ class OrderRepository extends BaseRepository
                 Omnipay::setGateway('paypal');
                 break;
             default:
-                return $this->createOrder($request);
+                $order = $this->createOrder($request);
+                //Get VA
+                $midtrans = $this->getVirtualAccount($order->tracking_number, $order->amount, $order->payment_gateway);
+                $order->virtual_account = $midtrans->va_numbers[0]->va_number;
+                dd($order);
                 break;
         }
 
@@ -115,10 +119,6 @@ class OrderRepository extends BaseRepository
             $request['payment_id'] = $payment_id;
             $order = $this->createOrder($request);
 
-            //Get VA
-            $midtrans = $this->getVirtualAccount($order->tracking_number, $order->amount, $order->payment_gateway);
-            $order->virtual_account = $midtrans->va_numbers[0]->va_number;
-            dd($order);
             return $order;
         } elseif ($response->isRedirect()) {
             return $response->getRedirectResponse();
