@@ -278,7 +278,7 @@ class OrderRepository extends BaseRepository
         $payload_json = json_encode($payload);
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => "https://api.sandbox.midtrans.com/v2/charge",
+            CURLOPT_URL => "https://api.midtrans.com/v2/charge",
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
@@ -289,7 +289,7 @@ class OrderRepository extends BaseRepository
             CURLOPT_HTTPHEADER => array(
                 "content-type: application/json",
                 "accept: application/json",
-                "authorization: Basic U0ItTWlkLXNlcnZlci1aeWZmTUM4UkJjTzIwWnllc1J4Q1p6WGQ6"
+                "authorization: Basic ".env('MIDTRANS_TOKEN')
             ),
         ));
 
