@@ -108,7 +108,8 @@ class OrderRepository extends BaseRepository
                 $order = $this->createOrder($request);
                 //Get VA
                 $midtrans = $this->getVirtualAccount($order->tracking_number, $order->amount, $order->payment_gateway);
-                $order->virtual_account = $midtrans->va_numbers[0]->va_number;
+                $midtransData = json_decode($midtrans);
+                $order->virtual_account = $midtransData->va_numbers[0]->va_number;
                 dd($order);
                 break;
         }
