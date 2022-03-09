@@ -107,7 +107,7 @@ class OrderRepository extends BaseRepository
             default:
                 $order = $this->createOrder($request);
                 //Get VA
-                $midtrans = $this->getVirtualAccount($order->tracking_number, $order->amount, $order->payment_gateway);
+                $midtrans = $this->getVirtualAccount($order->tracking_number, $order->paid_total, $order->payment_gateway);
                 $midtransData = json_decode($midtrans);
                 $order->virtual_account = $midtransData->va_numbers[0]->va_number;
                 return $order;
@@ -261,17 +261,18 @@ class OrderRepository extends BaseRepository
         }
     }
 
-    private function getVirtualAccount($orderid, $amount, $bank){
+    private function getVirtualAccount($orderid, $amount, $bank)
+    {
         $curl = curl_init();
 
         $payload = [
             "payment_type" => "bank_transfer",
             "transaction_details" => [
-                "order_id"=> $orderid,
-                "gross_amount"=> $amount
+                "order_id" => $orderid,
+                "gross_amount" => $amount
             ],
-            "bank_transfer"=> [
-                "bank"=> $bank
+            "bank_transfer" => [
+                "bank" => $bank
             ]
         ];
 
@@ -289,7 +290,7 @@ class OrderRepository extends BaseRepository
             CURLOPT_HTTPHEADER => array(
                 "content-type: application/json",
                 "accept: application/json",
-                "authorization: Basic ".env('MIDTRANS_TOKEN')
+                "authorization: Basic " . env('MIDTRANS_TOKEN')
             ),
         ));
 
